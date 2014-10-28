@@ -62,6 +62,8 @@ def factory(command_name, **kwargs):
             'Command "%s" is not supported' % command_name)
 
 
+unknown_optional_params = set()
+
 def get_optional_name(code):
     """Return optional_params name by given code. If code is unknown, raise
     UnkownCommandError exception"""
@@ -70,8 +72,11 @@ def get_optional_name(code):
         if value == code:
             return key
 
-    raise exceptions.UnknownCommandError(
-        'Unknown SMPP command code "0x%x"' % code)
+    if code not in unknown_optional_params:
+        unknown_optional_params.add(code)
+        logger.warn('type 0x%x not recognized', code)
+
+    return None
 
 
 def get_optional_code(name):
@@ -369,6 +374,12 @@ class Command(pdu.PDU):
             length = int(''.join(map(str, struct.unpack('!H',
                 data[pos:pos + 2]))))
             pos += 2
+
+            # skip unknown/custom tlv
+            if field is None:
+                pos += length
+                continue
+
             param = self.params[field]
 
             if param.type is int:
