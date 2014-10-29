@@ -269,9 +269,10 @@ class Command(pdu.PDU):
 
         size = self.params[field].size
         field_value = getattr(self, field)
-        unpacked_data = self._unpack(self._pack_format(field),
+        unpacked_data = struct.unpack(self._pack_format(field),
             data[pos:pos + size])
-        field_value = ''.join(map(str, unpacked_data))
+        assert len(unpacked_data) == 1
+        field_value = unpacked_data[0]
         setattr(self, field, field_value)
         pos += size
 
