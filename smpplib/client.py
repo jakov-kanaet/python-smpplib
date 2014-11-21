@@ -195,18 +195,22 @@ class Client(object):
 
         return True
 
+    def _socket_recv_n(self, n):
+        buffer = ''
+        got = 0
+        while True:
+            buffer += self._socket.recv(n - got)
+            got = len(buffer)
+            if got == n:
+                return buffer
+
     def read_pdu(self):
         """Read PDU from the SMSC"""
 
         logger.debug('Waiting for PDU...')
 
-        raw_len = ''
         try:
-            while True:
-                got = len(raw_len)
-                if got == 4:
-                    break
-                raw_len += self._socket.recv(4 - got)
+            raw_len = self._socket_recv_n(4)
         except socket.timeout:
             raise
         except ssl.SSLError, e:
@@ -228,7 +232,7 @@ class Client(object):
             logger.warning('Receive broken pdu... %s', repr(raw_len))
             raise exceptions.PDUError('Broken PDU')
 
-        raw_pdu = self._socket.recv(length - 4)
+        raw_pdu = self._socket_recv_n(length - 4)
         raw_pdu = raw_len + raw_pdu
 
         logger.debug('<<%s (%d bytes)', binascii.b2a_hex(raw_pdu), len(raw_pdu))
