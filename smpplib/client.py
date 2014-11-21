@@ -22,6 +22,7 @@
 
 """SMPP client module"""
 
+import ssl
 import socket
 import struct
 import binascii
@@ -63,11 +64,13 @@ class Client(object):
     _socket = None
     sequence_generator = None
 
-    def __init__(self, host, port, timeout=5, sequence_generator=None):
+    def __init__(self, host, port, timeout=5, sequence_generator=None,
+                       ssl=False):
         """Initialize"""
 
         self.host = host
         self.port = int(port)
+        self.ssl = ssl
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._socket.settimeout(timeout)
         self.receiver_mode = False
@@ -97,12 +100,15 @@ class Client(object):
     def connect(self):
         """Connect to SMSC"""
 
-        logger.info('Connecting to %s:%s...', self.host, self.port)
+        logger.info('Connecting to %s:%s SSL=%s ...',
+                    self.host, self.port, self.ssl)
 
         try:
             if self._socket is None:
                 self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self._socket.connect((self.host, self.port))
+            if self.ssl:
+                self._socket = ssl.wrap_socket(self._socket)
             self.state = consts.SMPP_CLIENT_STATE_OPEN
         except socket.error:
             raise exceptions.ConnectionError("Connection refused")
