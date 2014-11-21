@@ -200,13 +200,25 @@ class Client(object):
 
         logger.debug('Waiting for PDU...')
 
+        raw_len = ''
         try:
-            raw_len = self._socket.recv(4)
+            while True:
+                got = len(raw_len)
+                if got == 4:
+                    break
+                raw_len += self._socket.recv(4 - got)
         except socket.timeout:
             raise
+        except ssl.SSLError, e:
+            if 'timed out' in e.args[0]:
+                raise socket.timeout()
+            else:
+                logger.warning('%s %s', type(e), e)
+                raise exceptions.ConnectionError()
         except socket.error, e:
-            logger.warning(e)
+            logger.warning('%s %s', type(e), e)
             raise exceptions.ConnectionError()
+
         if not raw_len:
             raise exceptions.ConnectionError()
 
