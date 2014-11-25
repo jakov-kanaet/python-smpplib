@@ -199,7 +199,10 @@ class Client(object):
         buffer = ''
         got = 0
         while True:
-            buffer += self._socket.recv(n - got)
+            chunk = self._socket.recv(n - got)
+            if not chunk:
+                raise exceptions.ConnectionError()
+            buffer += chunk
             got = len(buffer)
             if got == n:
                 return buffer
