@@ -324,5 +324,6 @@ OPTIONAL_PARAMS = {
     'ms_validity': 0x1204,
     'alert_on_message_delivery': 0x130C,
     'its_reply_type': 0x1380,
-    'its_session_info': 0x1383
+    'its_session_info': 0x1383,
+    'callback_data': 0x145A
 }

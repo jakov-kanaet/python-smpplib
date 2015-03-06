@@ -296,10 +296,13 @@ class Client(object):
             try:
                 p = self.read_pdu()
             except socket.timeout:
+                """
                 logger.debug('Socket timeout, listening again')
                 p = smpp.make_pdu('enquire_link', client=self)
                 self.send_pdu(p)
                 continue
+                """
+                return
 
             if p.is_error():
                 logger.warning('PDU %s error: status=%s desc=%s',

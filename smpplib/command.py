@@ -560,7 +560,8 @@ class DataSM(Command):
         'alert_on_msg_delivery': Param(type=flag),
         'language_indicator': Param(type=int, size=1),
         'its_reply_type': Param(type=int, size=1),
-        'its_session_info': Param(type=int, size=2)
+        'its_session_info': Param(type=int, size=2),
+        'callback_data': Param(type=str, max=65)
     }
 
     params_order = ('service_type', 'source_addr_ton', 'source_addr_npi',
@@ -580,7 +581,7 @@ class DataSM(Command):
         'user_response_code', 'display_time', 'sms_signal',
         'ms_validity', 'ms_msg_wait_facilities', 'number_of_messages',
         'alert_on_message_delivery', 'language_indicator', 'its_reply_type',
-        'its_session_info')
+        'its_session_info', 'callback_data')
 
     def __init__(self, command, **kwargs):
         """Initialize"""
@@ -737,6 +738,7 @@ class SubmitSM(Command):
         'its_reply_type': Param(type=int, size=1),
         'its_session_info': Param(type=int, size=2),
         'ussd_service_op': Param(type=int, size=1),
+        'callback_data': Param(type=str, max=65)
     }
 
     params_order = ('service_type', 'source_addr_ton', 'source_addr_npi',
@@ -756,7 +758,7 @@ class SubmitSM(Command):
         'sms_signal', 'ms_validity', 'ms_msg_wait_facilities',
         'number_of_messages', 'alert_on_message_delivery',
         'language_indicator', 'its_reply_type', 'its_session_info',
-        'ussd_service_op')
+        'ussd_service_op','callback_data')
 
     def __init__(self, command, **kwargs):
         """Initialize"""
@@ -834,6 +836,7 @@ class DeliverSM(SubmitSM):
         'network_error_code': Param(type=ostr, size=3),
         'message_state': Param(type=int, size=1),
         'receipted_message_id': Param(type=str, max=65),
+        'callback_data': Param(type=str, max=65),
         }
 
     params_order = ('service_type', 'source_addr_ton', 'source_addr_npi',
@@ -850,7 +853,7 @@ class DeliverSM(SubmitSM):
         'payload_type', 'message_payload',
         'callback_num', 'source_subaddress',
         'dest_subaddress', 'language_indicator', 'its_session_info',
-        'network_error_code', 'message_state', 'receipted_message_id')
+        'network_error_code', 'message_state', 'receipted_message_id', 'callback_data')
 
     def __init__(self, command, **kwargs):
         """Initialize"""
